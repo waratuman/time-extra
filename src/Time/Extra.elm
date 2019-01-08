@@ -13,6 +13,7 @@ module Time.Extra exposing
     , endOfWeek
     , epoch
     , fromDateTuple
+    , fromIso8601Date
     , intToMonth
     , monthToInt
     , setDay
@@ -53,6 +54,7 @@ module Time.Extra exposing
 @docs endOfWeek
 @docs epoch
 @docs fromDateTuple
+@docs fromIso8601Date
 @docs intToMonth
 @docs monthToInt
 @docs setDay
@@ -179,6 +181,30 @@ toIso8601DateTimeUTC dt =
         ++ "T"
         ++ toIso8601Time utc dt
         ++ "Z"
+
+
+{-| Converts an ISO8601 date into a`Posix` for a given `Zone`.
+-}
+fromIso8601Date : Zone -> String -> Maybe Posix
+fromIso8601Date z date =
+    case String.split "-" date of
+        [ y_, m_, d_ ] ->
+            Maybe.map3
+                (\a b c ->
+                    epoch
+                        |> setYear z a
+                        |> setMonth z b
+                        |> setDay z c
+                )
+                (String.right 4 y_ |> String.toInt)
+                (String.right 2 m_
+                    |> String.toInt
+                    |> Maybe.andThen intToMonth
+                )
+                (String.right 2 d_ |> String.toInt)
+
+        _ ->
+            Nothing
 
 
 {-| The months of the year.

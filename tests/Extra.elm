@@ -555,6 +555,17 @@ suite =
                 \_ ->
                     Expect.equal "1969-12-31" (epoch |> toIso8601Date nyc)
             ]
+        , describe "fromIso8601Date"
+            [ test "utc" <|
+                \_ ->
+                    Expect.equal (Just epoch) (fromIso8601Date utc "1970-01-01")
+            , test "nyc" <|
+                \_ ->
+                    Expect.equal (Just epoch) (fromIso8601Date nyc "1969-12-31")
+            , test "utc + 1 day" <|
+                \_ ->
+                    Expect.equal (Just (millisToPosix 86400000)) (fromIso8601Date utc "1970-01-02")
+            ]
         , describe "toIso8601DateTime"
             [ test "utc" <|
                 \_ ->
